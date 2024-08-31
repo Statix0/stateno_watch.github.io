@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Welcome to Video App</h1>
+        <nav>
+            <div id="userMenu" style="display: none;">
+                <button id="profileButton">
+                    <img id="profileImage" src="../uploads/profilePics/default-profile.png" alt="Profile Picture">
+                </button>
+                <div id="profileDropdown" class="profile-dropdown">
+                    <span id="username"></span>
+                    <a href="#" id="uploadLink">Upload Video</a>
+                    <a href="/edit-profile.html">Edit Profile</a>
+                    <a href="/logout">Logout</a>
+                </div>
+            </div>
+            <a href="/login.html" id="loginLink">Login</a> |
+            <a href="/register.html" id="registerLink">Register</a>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <!-- Hidden upload section -->
+        <div id="uploadSection" class="upload-section" style="display: none;">
+            <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
+                <input type="file" name="video" accept="video/*" required>
+                <button type="submit">Upload Video</button>
+            </form>
+        </div>
+
+        <!-- Video list -->
+        <div id="videoList" class="video-list">
+            <!-- Videos will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <script>
+        // Fetch and display videos
+        function fetchVideos() {
+            fetch('/videos')
+                .then(response => response.json())
+                .then(videos => {
+                    const videoList = document.getElementById('videoList');
+                    videoList.innerHTML = ''; // Clear existing videos
+                    videos.forEach(videoPath => {
+                        const videoItem = document.createElement('div');
+                        videoItem.classList.add('video-item');
+                        videoItem.innerHTML = `<video controls src="${videoPath}"></video>`;
+                        videoList.appendChild(videoItem);
+                    });
+                });
+        }
+
+        fetchVideos(); // Initial fetch of videos
+
+        // Check if the user is authenticated
+        fetch('/check-auth')
+            .then(response => response.json())
+            .then(data => {
+                if (data.authenticated) {
+                    document.getElementById('uploadSection').style.display = 'none';
+                    document.getElementById('loginLink').style.display = 'none';
+                    document.getElementById('registerLink').style.display = 'none';
+                    document.getElementById('userMenu').style.display = 'flex'; // Show profile menu
+
+                    // Fetch username and profile picture
+                    fetch('/get-username')
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.username) {
+                                document.getElementById('username').innerText = data.username;
+                            }
+                        });
+                    fetch('/get-profile-pic')
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('profileImage').src = data.profilePic || '../uploads/profilePics/default-profile.png';
+                        });
+                } else {
+                    document.getElementById('uploadSection').style.display = 'none';
+                    document.getElementById('loginLink').style.display = 'block';
+                    document.getElementById('registerLink').style.display = 'block';
+                    document.getElementById('userMenu').style.display = 'none'; // Hide profile menu
+                }
+            });
+
+        // Toggle profile dropdown menu
+        document.getElementById('profileButton').addEventListener('click', () => {
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Show upload section when "Upload Video" is clicked
+        document.getElementById('uploadLink').addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent default link behavior
+            const uploadSection = document.getElementById('uploadSection');
+            uploadSection.style.display = uploadSection.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Handle form submission for video upload
+        document.getElementById('uploadForm').addEventListener('submit', (e) => {
+            e.preventDefault(); // Prevent default form submission
+
+            const form = e.target;
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Reload the page to fetch and display the updated list of videos
+                    window.location.reload();
+                } else {
+                    alert('Failed to upload video.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while uploading the video.');
+            });
+        });
+
+        // Ensure this part is only included if the form is on this page
+        const updateProfilePicForm = document.getElementById('updateProfilePicForm');
+        if (updateProfilePicForm) {
+            updateProfilePicForm.addEventListener('submit', (e) => {
+                e.preventDefault(); // Prevent default form submission
+
+                const form = e.target;
+                const formData = new FormData(form);
+
+                fetch('/update-profile', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Update the profile picture on the page
+                        fetch('/get-profile-pic')
+                            .then(response => response.json())
+                            .then(data => {
+                                document.getElementById('profileImage').src = data.profilePic || '../uploads/profilePics/default-profile.png';
+                            });
+                    } else {
+                        alert('Failed to update profile picture.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while updating the profile picture.');
+                });
+            });
+        }
+    </script>
+</body>
+</html>

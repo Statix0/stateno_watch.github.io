@@ -1,0 +1,171 @@
+/* General styling */
+body {
+    padding: 0;
+    margin: 0;
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
+}
+
+/* Container for the whole page */
+.container {
+    max-width: 600px;
+    padding: 20px;
+    margin: 0 auto;
+}
+
+/* Header styling */
+header {
+    position: relative; /* For absolute positioning of the profile menu */
+    padding: 20px;
+    color: #61dafb;
+    background-color: #20232a;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+}
+
+/* Profile menu styling */
+#userMenu {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+}
+
+#profileButton {
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+#profileImage {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Dropdown styling */
+.profile-dropdown {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    display: none;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.profile-dropdown span {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.profile-dropdown a {
+    color: #ff0000;
+    text-decoration: none;
+}
+
+.profile-dropdown a:hover {
+    text-decoration: underline;
+}
+
+/* Show dropdown when profile button is clicked */
+#userMenu.active .profile-dropdown {
+    display: block;
+}
+
+/* Upload section styling */
+.upload-section {
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.upload-section input[type="file"] {
+    margin-bottom: 10px;
+}
+
+.upload-section button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    background-color: #ff0000;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.upload-section button:hover {
+    background-color: #cc0000;
+}
+
+/* Video list styling */
+.video-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.video-item {
+    width: calc(33.333% - 10px); /* Three videos per row with spacing */
+    box-sizing: border-box;
+}
+
+.video-item video {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Form styling */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+form input[type="text"], form input[type="password"] {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+form button {
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    background-color: #ff0000;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+form button:hover {
+    background-color: #cc0000;
+}
+
+form p {
+    margin-top: 10px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .video-item {
+        width: calc(50% - 10px); /* Two videos per row */
+    }
+}
+
+@media (max-width: 480px) {
+    .video-item {
+        width: 100%; /* One video per row */
+    }
+}

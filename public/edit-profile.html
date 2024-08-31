@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Edit Profile</h1>
+        <nav>
+            <a href="/" id="homeLink">Home</a>
+            <a href="/logout">Logout</a>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <form id="editProfileForm" action="/update-profile" method="POST" enctype="multipart/form-data">
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email">
+            </div>
+            <div>
+                <label for="password">New Password:</label>
+                <input type="password" id="password" name="password">
+            </div>
+            <div>
+                <label for="name">Username:</label>
+                <input type="text" id="name" name="username">
+            </div>
+            <div>
+                <label for="profilePic">Profile Picture:</label>
+                <input type="file" id="profilePic" name="profilePic" accept="image/*">
+            </div>
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+
+    <script>
+        // Fetch current user details and populate the form
+        fetch('/get-profile')
+            .then(response => response.json())
+            .then(data => {
+                if (data.email) {
+                    document.getElementById('email').value = data.email;
+                }
+                if (data.username) {
+                    document.getElementById('name').value = data.username;
+                }
+                // Set profile picture URL if available
+                if (data.profilePic) {
+                    document.getElementById('profilePic').value = data.profilePic;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching profile:', error);
+            });
+
+        // Handle form submission
+        document.getElementById('editProfileForm').addEventListener('submit', (e) => {
+            e.preventDefault(); // Prevent default form submission
+
+            const form = e.target;
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Profile updated successfully.');
+                    window.location.href = '/';
+                } else {
+                    alert('Failed to update profile.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating the profile.');
+            });
+        });
+    </script>
+</body>
+</html>
